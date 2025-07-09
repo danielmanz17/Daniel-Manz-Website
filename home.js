@@ -112,74 +112,84 @@ document.addEventListener("DOMContentLoaded", () => {
       nonSpaceIndices.push(i);
     }
   }
-asciiTarget.textContent = asciiArt;
+  
+  // Render ASCII art instantly
+  asciiTarget.textContent = asciiArt;
 
   const textBox = document.getElementById("text-box-nav");
 
-function renderTextBox(text, linksMap = null, instant = false) {
-  function escapeRegExp(string) {
-    return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+  function renderTextBox(text, linksMap = null, instant = false) {
+    function escapeRegExp(string) {
+      return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    if (instant) {
+      // Instant render with line breaks and links
+      let html = text.replace(/\n/g, '<br>');
+      if (linksMap) {
+        Object.entries(linksMap).forEach(([txt, href]) => {
+          // Convert the link text from contentMap format to HTML format for matching
+          const htmlText = txt.replace(/\n/g, '<br>');
+          const regex = new RegExp(escapeRegExp(htmlText), 'g');
+          const isExternal = href.startsWith('http');
+          const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
+          html = html.replace(regex, anchor);
+        });
+      }
+      textBox.innerHTML = html;
+      return;
+    }
+
+    // Incremental typing effect
+    let i = 0;
+    const chars = text.split('');
+    const display = [];
+
+    function renderStep() {
+      if (i < chars.length) {
+        display.push(chars[i]);
+        textBox.innerHTML = display.join('').replace(/\n/g, '<br>');
+        i++;
+        setTimeout(renderStep, 0);
+      } else if (linksMap) {
+        Object.entries(linksMap).forEach(([txt, href]) => {
+          // Convert the link text from contentMap format to HTML format for matching
+          const htmlText = txt.replace(/\n/g, '<br>');
+          const regex = new RegExp(escapeRegExp(htmlText), 'g');
+          const isExternal = href.startsWith('http');
+          const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
+          textBox.innerHTML = textBox.innerHTML.replace(regex, anchor);
+        });
+      }
+    }
+
+    renderStep();
   }
 
-  if (instant) {
-    // Instant render with line breaks and links
-    let html = text.replace(/\n/g, '<br>');
-    if (linksMap) {
-      Object.entries(linksMap).forEach(([txt, href]) => {
-        // Convert the link text from contentMap format to HTML format for matching
-        const htmlText = txt.replace(/\n/g, '<br>');
-        const regex = new RegExp(escapeRegExp(htmlText), 'g');
-        const isExternal = href.startsWith('http');
-        const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
-        html = html.replace(regex, anchor);
-      });
-    }
-    textBox.innerHTML = html;
-    return;
-  }
+  // Initially render Projects section instantly
+  renderTextBox(contentMap['Projects'], projectsLinks, true);
 
-  // Incremental typing effect
-  let i = 0;
-  const chars = text.split('');
-  const display = [];
-
-  function renderStep() {
-    if (i < chars.length) {
-      display.push(chars[i]);
-      textBox.innerHTML = display.join('').replace(/\n/g, '<br>');
-      i++;
-      setTimeout(renderStep, 0);
-    } else if (linksMap) {
-      Object.entries(linksMap).forEach(([txt, href]) => {
-        // Convert the link text from contentMap format to HTML format for matching
-        const htmlText = txt.replace(/\n/g, '<br>');
-        const regex = new RegExp(escapeRegExp(htmlText), 'g');
-        const isExternal = href.startsWith('http');
-        const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
-        textBox.innerHTML = textBox.innerHTML.replace(regex, anchor);
-      });
-    }
-  }
-
-  renderStep();
-}
-
-// Making nav links clickable
-
-const linksMap = projectsLinks;
-renderTextBox(contentMap['Projects'], linksMap, true);
-
-document.querySelectorAll('nav .menu li a').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const key = e.target.textContent.trim();
-    if (key === 'CV') {
-      window.open('./assets/docs/cv.pdf', '_blank');
-    } else if (contentMap[key]) {
-      const linksMap = key === 'Projects' ? projectsLinks :
-                       key === 'Bio' ? bioLinks : null;
-      renderTextBox(contentMap[key], linksMap);
-    }
+  // Making nav links clickable
+  document.querySelectorAll('nav .menu li a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const key = e.target.textContent.trim();
+      
+      console.log('Clicked nav item:', key); // Debug log
+      console.log('Available keys:', Object.keys(contentMap)); // Debug log
+      
+      if (key === 'CV') {
+        window.open('./assets/docs/cv.pdf', '_blank');
+      } else if (key === 'Projects' || key === 'Portfolio') {
+        // Handle both "Projects" and "Portfolio" text - render with typing animation when clicked
+        renderTextBox(contentMap['Projects'], projectsLinks, false);
+      } else if (key === 'Bio') {
+        renderTextBox(contentMap['Bio'], bioLinks, false);
+      } else if (key === 'Contact') {
+        renderTextBox(contentMap['Contact'], null, false);
+      } else {
+        console.log('No matching content for key:', key); // Debug log
+      }
+    });
   });
-});
 });

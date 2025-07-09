@@ -1,4 +1,4 @@
-// Defining the ASCII self-portrait to be rendered
+// Another page where ASCII/projects already rendered
 
 const asciiArt = `
                                ..=:.-=-:. ....:......                                      
@@ -88,7 +88,6 @@ instagram: @manzzzzzzzzzzd
 };
 
 // Links to projects
-
 const projectsLinks = {
   'Brave, 2024\nEmbedded AI-driven sound synthesiser, enabling network-bending': 'brave.html',
   'Ancestral (r)Evocations, 2024\nArchival sonification instrument, live ML feedback soundscape': 'ancestral.html',
@@ -100,7 +99,6 @@ const bioLinks = {
   'LinkedIn': 'https://www.linkedin.com/in/daniel-manz-a0464b1b2/'
 };
 
-// Adding functionality to render ASCII art
 
 document.addEventListener("DOMContentLoaded", () => {
   const asciiTarget = document.getElementById("ascii-art");
@@ -114,41 +112,38 @@ document.addEventListener("DOMContentLoaded", () => {
       nonSpaceIndices.push(i);
     }
   }
-
-  function renderAsciiStep() {
-
-    const charsPerFrame = 14;
-
-    for (
-      let j = 0;
-      j < charsPerFrame && asciiIndex < nonSpaceIndices.length;
-      j++, asciiIndex++
-    ) {
-      const pos = nonSpaceIndices[asciiIndex];
-      asciiDisplay[pos] = asciiArt[pos];
-    }
-
-    asciiTarget.textContent = asciiDisplay.join('');
-
-    if (asciiIndex < nonSpaceIndices.length) {
-      setTimeout(renderAsciiStep, 0); 
-    } else {
-    }
-  }
+  
+  // Render ASCII art instantly
+  asciiTarget.textContent = asciiArt;
 
   const textBox = document.getElementById("text-box-nav");
 
-  // Adding functionality to render nav menu text
-
-  function renderTextBox(text, linksMap = null) {
-    let i = 0;
-    textBox.innerHTML = '';
-    const chars = text.split('');
-    const display = [];
-
+  function renderTextBox(text, linksMap = null, instant = false) {
     function escapeRegExp(string) {
       return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
     }
+
+    if (instant) {
+      // Instant render with line breaks and links
+      let html = text.replace(/\n/g, '<br>');
+      if (linksMap) {
+        Object.entries(linksMap).forEach(([txt, href]) => {
+          // Convert the link text from contentMap format to HTML format for matching
+          const htmlText = txt.replace(/\n/g, '<br>');
+          const regex = new RegExp(escapeRegExp(htmlText), 'g');
+          const isExternal = href.startsWith('http');
+          const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
+          html = html.replace(regex, anchor);
+        });
+      }
+      textBox.innerHTML = html;
+      return;
+    }
+
+    // Incremental typing effect
+    let i = 0;
+    const chars = text.split('');
+    const display = [];
 
     function renderStep() {
       if (i < chars.length) {
@@ -157,9 +152,9 @@ document.addEventListener("DOMContentLoaded", () => {
         i++;
         setTimeout(renderStep, 0);
       } else if (linksMap) {
-        Object.entries(linksMap).forEach(([text, href]) => {
+        Object.entries(linksMap).forEach(([txt, href]) => {
           // Convert the link text from contentMap format to HTML format for matching
-          const htmlText = text.replace(/\n/g, '<br>');
+          const htmlText = txt.replace(/\n/g, '<br>');
           const regex = new RegExp(escapeRegExp(htmlText), 'g');
           const isExternal = href.startsWith('http');
           const anchor = `<a href="${href}"${isExternal ? ' target="_blank"' : ''}>${htmlText}</a>`;
@@ -170,24 +165,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderStep();
   }
-  
-  // Rendering ASCII art
 
-  renderAsciiStep();
+  // Initially render Projects section instantly
+  renderTextBox(contentMap['Projects'], projectsLinks, true);
 
-  // Render text when nav links are clicked
-
+  // Making nav links clickable
   document.querySelectorAll('nav .menu li a').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
       const key = e.target.textContent.trim();
+      
       if (key === 'CV') {
         window.open('./assets/docs/cv.pdf', '_blank');
       } else if (contentMap[key]) {
-        const linksMap = key === 'Projects' ? projectsLinks :
-                         key === 'Bio' ? bioLinks : null;
-        renderTextBox(contentMap[key], linksMap);
+        // Determine the appropriate links map based on the key
+        let linksMap = null;
+        if (key === 'Projects') {
+          linksMap = projectsLinks;
+        } else if (key === 'Bio') {
+          linksMap = bioLinks;
+        }
+        
+        // Projects renders instantly, others use typing animation
+        const instant = key === 'Projects';
+        renderTextBox(contentMap[key], linksMap, instant);
       }
+    });
   });
-});
 });
