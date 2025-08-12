@@ -30,7 +30,7 @@ body {
 /* Responsive ASCII art styling */
 @media (max-width: 768px) {
   #ascii-art {
-    font-size: 0.3rem;
+    font-size: 0.2rem;
     padding-left: 1.25rem;
   }
 }
