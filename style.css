@@ -186,9 +186,10 @@ nav {
   }
 
   /* Show only the second image */
-  .image-grid img:nth-child(2) {
-    display: block;
-  }
+.image-grid img:nth-child(2),
+.image-grid img:nth-child(3) {
+  display: block;
+}
 }
 
 /* Images for Brave */
