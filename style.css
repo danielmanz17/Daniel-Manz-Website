@@ -228,6 +228,24 @@ nav {
   width: 100%;
 }
 
+.gif-ancestral{
+  width: 100%;
+}
+
+.img-ancestral-latent{
+  width: 100%;
+}
+
+.img-ancestral{
+  width: 100%;
+}
+
+.img-debug{
+  width: 74%;
+}
+
+
+
 .img-logo {
   display: block;
   margin: 6.25rem auto 0 auto; 
@@ -253,7 +271,7 @@ nav {
 
 .left-text-box {
   width: 40%;
-  max-width: 34rem;
+  max-width: 20rem;
 }
 
 .right-text-box {
