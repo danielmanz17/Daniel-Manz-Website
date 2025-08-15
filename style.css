@@ -153,9 +153,8 @@ nav {
   }
 }
 
-
 /* Image grid for works */
-.image-grid {
+.image-grid-brave {
   width: 80%;
   max-width: 70rem; 
   display: grid;
@@ -166,14 +165,14 @@ nav {
 }
 
 /* Image styling */
-.image-grid img {
+.image-grid-brave img {
   height: auto;
   display: block;
   object-fit: contain;
 }
 
 @media (max-width: 767px) {
-  .image-grid {
+  .image-grid-brave {
     grid-template-columns: 1fr; /* single column on phones */
     gap:0;
     padding: 0;
@@ -181,16 +180,96 @@ nav {
   }
 
   /* Hide all images */
-  .image-grid img {
+  .image-grid-brave img {
     display: none;
   }
 
   /* Show only the second image */
-.image-grid img:nth-child(2),
-.image-grid img:nth-child(3) {
+.image-grid-brave img:nth-child(2),
+.image-grid-brave img:nth-child(3) {
   display: block;
 }
 }
+
+/* Image grid for works */
+.image-grid-ancestral {
+  width: 80%;
+  max-width: 70rem; 
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  padding-left: 1.25rem; 
+  gap: 1.25rem; 
+  justify-content: start;
+}
+
+/* Image styling */
+.image-grid-ancestral img {
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .image-grid-ancestral {
+    grid-template-columns: 1fr; /* single column on phones */
+    gap:0;
+    padding: 0;
+    width: 100%;
+  }
+
+  /* Hide all images */
+  .image-grid-ancestral img {
+    display: none;
+  }
+
+  /* Show only the second image */
+.image-grid-ancestral img:nth-child(2),
+.image-grid-ancestral img:nth-child(1) {
+  display: block;
+}
+
+.image-grid-ancestral img:nth-child(2) {
+  order: -1; /* Move 2nd image to the top */
+}
+}
+
+/* Image grid for works */
+.image-grid-icon {
+  width: 80%;
+  max-width: 70rem; 
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  padding-left: 1.25rem; 
+  gap: 1.25rem; 
+  justify-content: start;
+}
+
+/* Image styling */
+.image-grid-icon img {
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .image-grid-icon {
+    grid-template-columns: 1fr; /* single column on phones */
+    gap:0;
+    padding: 0;
+    width: 100%;
+  }
+
+  /* Hide all images */
+  .image-grid-icon img {
+    display: none;
+  }
+
+  /* Show only the second image */
+.image-grid-icon img:nth-child(1) {
+  display: block;
+}
+}
+
 
 /* Images for Brave */
 .img-proto {
@@ -257,7 +336,7 @@ nav {
 .img-logo {
   display: block;
   margin: 1.25rem 0 0 -1.5rem; /* top, right, bottom, left */
-  width: 40%;
+  width: 10%;
 }
 
 
@@ -281,7 +360,7 @@ nav {
 
 @media (max-width: 767px) {
   .works-text-container {
-    flex-direction: column;
+    flex-direction: column-reverse;
     font-size: 0.66rem;
   }
 
